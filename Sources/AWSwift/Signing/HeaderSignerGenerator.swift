@@ -134,7 +134,7 @@ struct HeaderSignerGenerator: Aws4Signer {
     internal func createSignature(signingKey: Array<UInt8>, signingString: String) -> String {
         let signatureBytes = try? HMAC(key: signingKey, variant: .sha256).authenticate([UInt8](signingString.utf8))
         
-        let hexString = NSMutableString()
+        let hexString = NSMutableString(string: "")
         for byte in signatureBytes! {
             hexString.appendFormat("%02x", UInt(byte))
         }
