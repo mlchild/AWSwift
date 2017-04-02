@@ -34,7 +34,7 @@ public struct DynamoDbTable {
 
 // TODO documentation
 extension DynamoDbTable: DynamoDbItemAction {
-    public func putItem(item: [String : Any], condition: String, conditionAttributes: [String : [String : String]], completion: @escaping ((String?, AwsRequestErorr?) -> Void)) {
+    public func putItem(item: [String : Any], condition: String, conditionAttributes: [String : [String : String]], completion: @escaping ((String?, AwsRequestError?) -> Void)) {
         
         let request = [
             "TableName": tableName,
@@ -48,7 +48,7 @@ extension DynamoDbTable: DynamoDbItemAction {
         }
     }
     
-    public func getItem(keyValues: DynamoDbTableKeyValues, completion: @escaping ((String?, AwsRequestErorr?) -> Void)) {
+    public func getItem(keyValues: DynamoDbTableKeyValues, completion: @escaping ((String?, AwsRequestError?) -> Void)) {
         var key = [
             partitionKey: [
                 "S": keyValues.partitionKeyValue
@@ -74,7 +74,7 @@ extension DynamoDbTable: DynamoDbItemAction {
         
     }
     
-    public func deleteItem(keyValue: DynamoDbTableKeyValues, conditionExpression: String?, returnValues: DynamoDbReturnValue?, completion: @escaping ((String?, AwsRequestErorr?) -> Void)) {
+    public func deleteItem(keyValue: DynamoDbTableKeyValues, conditionExpression: String?, returnValues: DynamoDbReturnValue?, completion: @escaping ((String?, AwsRequestError?) -> Void)) {
         
         // Check valid return value
         if let returnValues = returnValues {
@@ -82,7 +82,7 @@ extension DynamoDbTable: DynamoDbItemAction {
             case .none, .allOld: break
             default:
                 // Invalid return type
-                completion(nil, AwsRequestErorr.failed(message: "Invalid return value for delete"))
+                completion(nil, AwsRequestError.failed(message: "Invalid return value for delete"))
             }
         }
         

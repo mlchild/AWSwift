@@ -18,21 +18,27 @@ struct AwsRequest {
         self.requestMethod = requestMethod
     }
     
-    func makeRequest(onCompletion: @escaping (_ jsonResponse: String?, _ error: AwsRequestErorr?) -> Void) {
+    func makeRequest(onCompletion: @escaping (_ jsonResponse: String?, _ error: AwsRequestError?) -> Void) {
         let headerHost = "\(service.getServiceHostname()).\(region.rawValue).amazonaws.com"
         let urlString = "https://\(headerHost)"
         let url = URL(string: urlString)!
         var urlRequest = URLRequest(url: url)
         let requestDate = Date()
         let dateFormatter = DateFormatter()
+        dateFormatter.calendar = Calendar(identifier: .iso8601)
+        dateFormatter.locale = Locale(identifier: "en_US_POSIX")
+        dateFormatter.timeZone = TimeZone(secondsFromGMT: 0)
         dateFormatter.dateFormat = "yyyyMMdd'T'HHmmss'Z'"
         let requestDateString = dateFormatter.string(from: requestDate)
+        print("request date \(requestDate), string \(requestDateString)")
         let jsonData = try? JSONSerialization.data(withJSONObject: request, options: .prettyPrinted)
         
         guard let json = jsonData else {
             onCompletion(nil, .failed(message: "Could not convert request to JSON"))
             return
         }
+        
+        print("request \(request)")
         
         urlRequest.httpMethod = requestMethod.rawValue
         urlRequest.httpBody = json
@@ -57,7 +63,7 @@ struct AwsRequest {
                 responseString = String(data: data, encoding: .utf8)
             }
             
-            var awsError: AwsRequestErorr?
+            var awsError: AwsRequestError?
             
             if let error = error {
                 awsError = .failed(message: "Request failed: \(error.localizedDescription)")
@@ -71,6 +77,6 @@ struct AwsRequest {
     
 }
 
-public enum AwsRequestErorr: Error {
+public enum AwsRequestError: Error {
     case failed(message: String)
 }

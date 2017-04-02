@@ -14,10 +14,16 @@ struct HeaderSignerGenerator: Aws4Signer {
     // Move all the variables into a protocol `requestObject`
     func getAuthHeader(forRequest request: [String : Any], requestDate: Date, service: AwsService, region: AwsRegion, requestMethod: HttpMethod) -> String {
         
-        //test
+        
         let formatter = DateFormatter()
+        formatter.calendar = Calendar(identifier: .iso8601)
+        formatter.locale = Locale(identifier: "en_US_POSIX")
+        formatter.timeZone = TimeZone(secondsFromGMT: 0)
         formatter.dateFormat = "yyyyMMdd'T'HHmmss'Z'"
         let requestDateString = formatter.string(from: requestDate)
+        
+        print("auth header request date \(requestDate), string \(requestDateString)")
+        
         
         let headers = [
             "Content-Type": "application/x-amz-json-1.0",
@@ -97,9 +103,10 @@ struct HeaderSignerGenerator: Aws4Signer {
     internal func createSigningString(requestDate: Date, region: AwsRegion, service: AwsService, canonicalRequestHash: String) -> String {
         
         let formatter = DateFormatter()
-        let dateOnlyFormatter = DateFormatter()
+        formatter.calendar = Calendar(identifier: .iso8601)
+        formatter.locale = Locale(identifier: "en_US_POSIX")
+        formatter.timeZone = TimeZone(secondsFromGMT: 0)
         formatter.dateFormat = "yyyyMMdd'T'HHmmss'Z'"
-        dateOnlyFormatter.dateFormat = "yyyyMMdd"
         
         // Algorithm
         var signingString = "AWS4-HMAC-SHA256\n"
@@ -109,7 +116,11 @@ struct HeaderSignerGenerator: Aws4Signer {
         signingString += "\(formatter.string(from: requestDate))\n"
         
         // Credentials Scope
-        signingString += "\(dateOnlyFormatter.string(from: requestDate))/\(region.rawValue)/\(service.getServiceHostname())/aws4_request\n"
+        formatter.dateFormat = "yyyyMMdd"
+        signingString += "\(formatter.string(from: requestDate))/\(region.rawValue)/\(service.getServiceHostname())/aws4_request\n"
+        
+        print("signing string with dates \(signingString)")
+        //PROBLEM: IT THINKS EVERYTHING IS IN UTC BUT IS INSTEAD PLUGGING IN PST
         
         // Hashed Canonical Request
         signingString += "\(canonicalRequestHash)"
@@ -131,13 +142,14 @@ struct HeaderSignerGenerator: Aws4Signer {
         return kSigning!
     }
     
+    
     internal func createSignature(signingKey: Array<UInt8>, signingString: String) -> String {
         let signatureBytes = try? HMAC(key: signingKey, variant: .sha256).authenticate([UInt8](signingString.utf8))
         
         var hexString = ""
         for byte in signatureBytes! {
             hexString += String(format: "%02x", UInt(byte))
-//            hexString.appendFormat("%02x", UInt(byte))
+            //            hexString.appendFormat("%02x", UInt(byte))
         }
         
         let signature = String(hexString)!

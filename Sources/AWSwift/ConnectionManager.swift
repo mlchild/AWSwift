@@ -25,7 +25,7 @@ public struct ConnectionManager {
         self.region = region
     }
     
-    internal func request(_ request: [String: Any], method: HttpMethod, service: AwsService, completion: ((_ response: String?, _ error: AwsRequestErorr?) -> Void)?) {
+    internal func request(_ request: [String: Any], method: HttpMethod, service: AwsService, completion: ((_ response: String?, _ error: AwsRequestError?) -> Void)?) {
         
         let awsRequest = AwsRequest(awsAccessKeyId: accessId, awsAccessKeySecret: accessSecret, service: service, region: region, request: request, requestMethod: method)
         awsRequest.makeRequest { (jsonResponse, error) in
