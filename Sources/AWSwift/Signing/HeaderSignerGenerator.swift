@@ -14,7 +14,7 @@ struct HeaderSignerGenerator: Aws4Signer {
     // Move all the variables into a protocol `requestObject`
     func getAuthHeader(forRequest request: [String : Any], requestDate: Date, service: AwsService, region: AwsRegion, requestMethod: HttpMethod) -> String {
         
-        
+        //test
         let formatter = DateFormatter()
         formatter.dateFormat = "yyyyMMdd'T'HHmmss'Z'"
         let requestDateString = formatter.string(from: requestDate)
