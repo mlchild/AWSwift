@@ -30,7 +30,7 @@ struct AwsRequest {
         dateFormatter.timeZone = TimeZone(secondsFromGMT: 0)
         dateFormatter.dateFormat = "yyyyMMdd'T'HHmmss'Z'"
         let requestDateString = dateFormatter.string(from: requestDate)
-        print("request date \(requestDate), string \(requestDateString)")
+//        print("request date \(requestDate), string \(requestDateString)")
         let jsonData = try? JSONSerialization.data(withJSONObject: request, options: .prettyPrinted)
         
         guard let json = jsonData else {
@@ -38,7 +38,7 @@ struct AwsRequest {
             return
         }
         
-        print("request \(request)")
+//        print("request \(request)")
         
         urlRequest.httpMethod = requestMethod.rawValue
         urlRequest.httpBody = json

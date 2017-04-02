@@ -22,7 +22,7 @@ struct HeaderSignerGenerator: Aws4Signer {
         formatter.dateFormat = "yyyyMMdd'T'HHmmss'Z'"
         let requestDateString = formatter.string(from: requestDate)
         
-        print("auth header request date \(requestDate), string \(requestDateString)")
+//        print("auth header request date \(requestDate), string \(requestDateString)")
         
         
         let headers = [
@@ -119,7 +119,7 @@ struct HeaderSignerGenerator: Aws4Signer {
         formatter.dateFormat = "yyyyMMdd"
         signingString += "\(formatter.string(from: requestDate))/\(region.rawValue)/\(service.getServiceHostname())/aws4_request\n"
         
-        print("signing string with dates \(signingString)")
+//        print("signing string with dates \(signingString)")
         //PROBLEM: IT THINKS EVERYTHING IS IN UTC BUT IS INSTEAD PLUGGING IN PST
         
         // Hashed Canonical Request
